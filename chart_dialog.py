@@ -374,7 +374,7 @@ class ChartDialog(QDialog, FORM_CLASS):
         n_series = len(y_fields)
 
         # Colors and styles
-        color = self.colorWidgetY.color().name()
+        base_color = self.colorWidgetY.color().name()
         bg_color = self.colorWidgetBg.color().name()
         marker = self.markerCombo.currentText()
         linestyle = self.lineStyleCombo.currentText()
@@ -383,6 +383,23 @@ class ChartDialog(QDialog, FORM_CLASS):
         color_y2 = self.colorWidgetY2.color().name()
         marker_y2 = self.markerY2Combo.currentText()
         linestyle_y2 = self.lineStyleY2Combo.currentText()
+
+        # Build color cycle for multiple Y series
+        default_cycle = plt.rcParams.get("axes.prop_cycle", None)
+        if default_cycle is not None:
+            cycle_colors = list(default_cycle.by_key().get("color", []))
+        else:
+            cycle_colors = []
+
+        # Fallback: at least one color
+        if not cycle_colors:
+            cycle_colors = [base_color]
+
+        # Force first color = user-selected Y Color
+        cycle_colors[0] = base_color
+
+        # Final list of colors
+        colors = cycle_colors
 
         # Titles
         main_title = self.mainTitleEdit.text().strip()
@@ -424,7 +441,7 @@ class ChartDialog(QDialog, FORM_CLASS):
             y2_field=y2_field,
             y2_data=y2_data,
             separate_subplots=separate_subplots,
-            color=color,
+            colors=colors,
             color_y2=color_y2,
             bg_color=bg_color,
             marker=marker,
@@ -526,7 +543,7 @@ class ChartDialog(QDialog, FORM_CLASS):
         y2_field,
         y2_data,
         separate_subplots,
-        color,
+        colors,    
         color_y2,
         bg_color,
         marker,
@@ -535,6 +552,8 @@ class ChartDialog(QDialog, FORM_CLASS):
         linestyle_y2,
         bins
     ):
+
+
         n_series = len(y_fields)
 
         # Radar is special: uses polar axes and averages
@@ -550,17 +569,20 @@ class ChartDialog(QDialog, FORM_CLASS):
             else:
                 ax = axes[0]
 
+            # Pick color for this series
+            series_color = colors[idx % len(colors)]
+
             if chart_type == "Line":
-                self._plot_line(ax, x_data, y_data, yf, color, marker, linestyle)
+                self._plot_line(ax, x_data, y_data, yf, series_color, marker, linestyle)
 
             elif chart_type == "Scatter":
-                self._plot_scatter(ax, x_data, y_data, yf, color, marker)
+                self._plot_scatter(ax, x_data, y_data, yf, series_color, marker)
 
             elif chart_type == "Bar":
-                self._plot_bar(ax, x_data, y_data, yf, color)
+                self._plot_bar(ax, x_data, y_data, yf, series_color)
 
             elif chart_type == "Histogram":
-                self._plot_histogram(ax, y_data, yf, color, bins)
+                self._plot_histogram(ax, y_data, yf, series_color, bins)
 
             elif chart_type == "Pie":
                 if n_series > 1:
@@ -584,23 +606,24 @@ class ChartDialog(QDialog, FORM_CLASS):
                 break
 
             elif chart_type == "Violin":
-                self._plot_violin(ax, y_data_list, y_fields, color)
+                self._plot_violin(ax, y_data_list, y_fields, series_color)
                 break
 
             elif chart_type == "Linear Regression":
-                self._plot_line(ax, x_data, y_data, yf, color, marker, linestyle)
+                self._plot_line(ax, x_data, y_data, yf, series_color, marker, linestyle)
                 if self.enableLinearRegressionCheck.isChecked():
-                    self._plot_linear_regression(ax, x_data, y_data, color)
+                    self._plot_linear_regression(ax, x_data, y_data, series_color)
 
             elif chart_type == "Curve Fitting":
-                self._plot_line(ax, x_data, y_data, yf, color, marker, linestyle)
+                self._plot_line(ax, x_data, y_data, yf, series_color, marker, linestyle)
                 fit_type = self.fitTypeCombo.currentText()
                 degree = self.polyDegreeSpin.value()
-                self._plot_curve_fit(ax, x_data, y_data, fit_type, degree, color)
+                self._plot_curve_fit(ax, x_data, y_data, fit_type, degree, series_color)
 
             ax.set_facecolor(bg_color)
             if self.gridCheck.isChecked():
                 ax.grid(True)
+
 
         # Y2 plotting
         if ax2 and y2_data is not None and chart_type in ("Line", "Scatter", "Linear Regression", "Curve Fitting"):
