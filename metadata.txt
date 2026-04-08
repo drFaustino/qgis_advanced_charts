@@ -4,7 +4,7 @@ qgisMinimumVersion=4.00
 qgisMaximumVersion=4.99
 version=1.0.0
 author=Dr. Geol. Faustino Cetraro
-email=
+email=geol-faustino@libero.it
 homepage=https://github.com/drFaustino/qgis_advanced_charts
 repository=https://github.com/drFaustino/qgis_advanced_charts
 tracker=https://github.com/drFaustino/qgis_advanced_charts
@@ -12,14 +12,13 @@ category=Analysis
 icon=icon.png
 tags=charts,plot,visualization,analysis,matplotlib,statistics
 hasProcessingProvider=True
-supportsQt6=True
 experimental=False
 deprecated=False
 plugin_dependencies=
 
 about=An advanced charting plugin for QGIS that generates multi‑series plots, subplots, histograms, pie charts, boxplots, violin plots, radar charts, regressions, curve fitting, and dual‑axis (Y2) charts directly from vector layers.
 
-description=Creates advanced charts from vector layers, including line, scatter, bar, histogram, pie, boxplot, violin, radar, and area charts. Supports multi‑series plotting, dual Y‑axis, selection-based filtering, image export, regression, curve fitting, and customizable styling options. Designed for QGIS 4 and Qt6 with a clean, responsive UI.
+description=Creates advanced charts from vector layers, including line, scatter, bar, histogram, pie, boxplot, violin, radar, and area charts. Supports multi‑series plotting, dual Y‑axis, selection-based filtering, image export, regression, curve fitting, and customizable styling options. Designed for QGIS 4 with a clean, responsive UI.
 
 changelog=
   Version 1.0.0:
@@ -29,7 +28,7 @@ changelog=
     - Added dual-axis (Y2) charts.
     - Added selection-based filtering and export to image.
     - Added customizable styling options.
-    - Implemented Matplotlib backend optimized for QGIS 4 + Qt6.
+    - Implemented Matplotlib backend optimized for QGIS 4.
     - Improved UI layout and responsiveness.
 
 [plugin]
