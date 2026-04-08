@@ -3,6 +3,8 @@
 
 import os
 import datetime
+import matplotlib.dates as mdates
+from PyQt6 import QtCore
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import (
@@ -17,7 +19,7 @@ from qgis.core import QgsProject, QgsField
 
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-
+import numpy as np
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "advanced_charts_dialog.ui")
@@ -198,6 +200,9 @@ class ChartDialog(QDialog, FORM_CLASS):
         if field.type() in (QVariant.Date, QVariant.DateTime, QVariant.Time):
             return "date"
         if field.type() == QVariant.String:
+            # euristica: se il nome contiene 'date', trattalo come data
+            if "date" in field.name().lower():
+                return "date_string"
             return "string"
         return "other"
 
@@ -214,23 +219,74 @@ class ChartDialog(QDialog, FORM_CLASS):
         ftype = self.get_field_type(field)
 
         values = []
+
         for f in self.get_features():
             val = f[field_name]
             if val is None:
                 continue
 
+            # --- DATE NATIVE (QDate, QDateTime, datetime) ---
             if ftype == "date":
+                if isinstance(val, QtCore.QDate):
+                    values.append(val.toPyDate())
+                    continue
+
+                if isinstance(val, QtCore.QDateTime):
+                    values.append(val.toPyDateTime())
+                    continue
+
                 if isinstance(val, (datetime.date, datetime.datetime)):
                     values.append(val)
-                else:
-                    try:
-                        values.append(datetime.datetime.fromisoformat(str(val)))
-                    except Exception:
-                        continue
+                    continue
+
+                try:
+                    values.append(datetime.datetime.fromisoformat(str(val)))
+                    continue
+                except Exception:
+                    continue
+
+            # --- STRINGHE ISO O DD/MM/YYYY ---
+            elif ftype == "date_string":
+                s = str(val)
+                try:
+                    values.append(datetime.datetime.fromisoformat(s))
+                    continue
+                except Exception:
+                    pass
+
+                try:
+                    values.append(datetime.datetime.strptime(s, "%d/%m/%Y"))
+                    continue
+                except Exception:
+                    continue
+
+            # --- NUMERICI ---
+            elif ftype == "numeric":
+                try:
+                    values.append(float(val))
+                except Exception:
+                    continue
+
+            # --- STRINGHE NORMALI ---
+            elif ftype == "string":
+                values.append(str(val))
+
+            # --- ALTRO ---
             else:
                 values.append(val)
 
+        # Se abbiamo convertito date → tipo date
+        if ftype in ("date", "date_string"):
+            return values, "date"
+
         return values, ftype
+
+    # -----------------------------------------
+    # CONVERT ALWAY DATE IN NUMBERS
+    def _convert_x(self, x_data, x_type):
+        if x_type == "date":
+            return mdates.date2num(x_data)
+        return x_data
 
     # ---------------------------------------------------------------------
     # SMART CHART TYPE SUGGESTION
@@ -312,10 +368,15 @@ class ChartDialog(QDialog, FORM_CLASS):
             return
 
         y_fields = [item.text() for item in selected_items]
-
+       
         # X data
         x_data, x_type = self.get_data(x_field)
-        if not x_data:
+        x_data = self._convert_x(x_data, x_type)
+
+        #import numpy as np
+        x_data = np.array(x_data, dtype=float if x_type=="date" else object)
+
+        if x_data is None or len(x_data) == 0:
             QMessageBox.warning(
                 self,
                 self.tr("Advanced Charts"),
@@ -337,6 +398,14 @@ class ChartDialog(QDialog, FORM_CLASS):
                 return
             y_data_list.append(data)
             y_types.append(ftype)
+
+        use_y2 = self.enableY2Check.isChecked()
+        
+        # Convertir Y in array numeric when X is a date
+        if x_type == "date":
+            y_data_list = [np.array(y, dtype=float) for y in y_data_list]
+            if use_y2:
+                y2_data = np.array(y2_data, dtype=float)
 
         # Optional Y2
         use_y2 = self.enableY2Check.isChecked()
@@ -362,6 +431,20 @@ class ChartDialog(QDialog, FORM_CLASS):
                 self.chartTypeCombo.setCurrentIndex(index)
 
         chart_type = self.chartTypeCombo.currentText()
+
+        # bloc chart do not suppurt date value
+        unsupported = ("Histogram", "Pie", "Boxplot", "Violin", "Radar", "Area", "Bar")
+        if x_type == "date" and chart_type in unsupported:
+            QMessageBox.warning(
+                self,
+                self.tr("Advanced Charts"),
+                self.tr(
+                    "The selected chart type does not support date values on the X axis.\n\n"
+                    "Supported chart types for date X fields are:\n"
+                    "- Line\n- Scatter\n- Linear Regression\n- Curve Fitting"
+                )
+            )
+            return
 
         # Histogram bins suggestion
         if chart_type == "Histogram":
@@ -427,6 +510,16 @@ class ChartDialog(QDialog, FORM_CLASS):
                     self.tr("Y2 axis is only supported for Line, Scatter, Linear Regression and Curve Fitting.")
                 )
                 return
+
+        # Format Date axis X
+        if x_type == "date":
+            for ax in axes:
+                ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+                ax.xaxis.set_major_locator(mdates.AutoDateLocator())
+
+        if ax2 and x_type == "date":
+            ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+            ax2.xaxis.set_major_locator(mdates.AutoDateLocator())
 
         # Dispatch to specific plot handlers
         self._plot_dispatch(
@@ -786,7 +879,7 @@ class ChartDialog(QDialog, FORM_CLASS):
         x_numeric = []
         for v in x_data:
             if isinstance(v, (datetime.date, datetime.datetime)):
-                x_numeric.append(v.toordinal())
+                x_numeric.append(mdates.date2num([v])[0])
             else:
                 try:
                     x_numeric.append(float(v))

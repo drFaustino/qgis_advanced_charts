@@ -238,7 +238,7 @@ SciPy is optional (required only for non‑polynomial curve fitting).
 
 # 🧑‍💻 Author
 
-**Dr. Geol. Faustino Cetraro**  
+**Dr. Geol. Faustino Cetraro**
 
 ---
 
