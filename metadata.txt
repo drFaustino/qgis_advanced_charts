@@ -2,7 +2,7 @@
 name=Advanced Charts
 qgisMinimumVersion=4.00
 qgisMaximumVersion=4.99
-version=1.0.0
+version=1.2.0
 author=Dr. Geol. Faustino Cetraro
 email=geol-faustino@libero.it
 homepage=https://github.com/drFaustino/qgis_advanced_charts
@@ -14,14 +14,28 @@ tags=charts,plot,visualization,analysis,matplotlib,statistics
 hasProcessingProvider=True
 experimental=False
 deprecated=False
-plugin_dependencies=
 
-about=An advanced charting plugin for QGIS that generates multi‑series plots, subplots, histograms, pie charts, boxplots, violin plots, radar charts, regressions, curve fitting, and dual‑axis (Y2) charts directly from vector layers.
+about=An advanced charting plugin for QGIS that generates multi-series plots, subplots, histograms, pie charts, boxplots, violin plots, radar charts, regressions, curve fitting, and dual-axis (Y2) charts directly from vector layers.
 
-description=Creates advanced charts from vector layers, including line, scatter, bar, histogram, pie, boxplot, violin, radar, and area charts. Supports multi‑series plotting, dual Y‑axis, selection-based filtering, image export, regression, curve fitting, and customizable styling options. Designed for QGIS 4 with a clean, responsive UI.
+description=Creates advanced charts from vector layers, including line, scatter, bar, histogram, pie, boxplot, violin, radar, and area charts. Supports multi-series plotting, dual Y-axis, selection-based filtering, image export, regression, curve fitting, customizable styling options, layer reloading, and progress feedback. Designed for QGIS 4 with a clean, responsive UI and Matplotlib integration.
 
 changelog=
-  Version 1.0.0:
+  Version 1.2.0:
+    - Added Reload button for refreshing the project layer list.
+    - Improved layer and field refresh handling.
+    - Added progress bar handling during chart generation.
+    - Progress bar is automatically reset to zero after chart generation.
+    - Improved chart clearing behavior.
+    - Preserved the original plot area dimensions when clearing the chart.
+    - Improved Matplotlib canvas and layout handling to prevent clipping.
+    - Fixed plot area resizing and vertical compression issues.
+    - Improved chart rendering inside the plot group box.
+    - Fixed Qt6 cursor handling.
+    - Removed obsolete pass statements.
+    - Improved compatibility with QGIS 4 and Qt6.
+    - Improved UI responsiveness and chart reset behavior.
+
+  Version 1.1.0:
     - Initial public release.
     - Added multi-series charts and subplot support.
     - Added histograms, pie charts, boxplots, violin and radar charts.

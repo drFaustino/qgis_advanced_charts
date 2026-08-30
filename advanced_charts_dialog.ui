@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1131</width>
-    <height>700</height>
+    <height>574</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,7 +43,7 @@
         <x>0</x>
         <y>0</y>
         <width>481</width>
-        <height>809</height>
+        <height>865</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="leftPanelLayout">
@@ -53,6 +53,37 @@
           <string>Data</string>
          </property>
          <layout class="QGridLayout" name="gridLayoutData">
+          <item row="4" column="0" colspan="5">
+           <widget class="QCheckBox" name="selectedOnlyCheck">
+            <property name="text">
+             <string>Use selected features only</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="2">
+           <widget class="QLabel" name="labelY2Field">
+            <property name="text">
+             <string>Y2 Field</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelXField">
+            <property name="text">
+             <string>X Field</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="labelYFields">
+            <property name="text">
+             <string>Y Fields (multi-selection)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="3" colspan="2">
+           <widget class="QComboBox" name="y2FieldCombo"/>
+          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="labelLayer">
             <property name="text">
@@ -60,56 +91,32 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1" colspan="3">
-           <widget class="QComboBox" name="layerCombo"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="labelXField">
-            <property name="text">
-             <string>X Field</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" colspan="3">
-           <widget class="QComboBox" name="xFieldCombo"/>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="labelYFields">
-            <property name="text">
-             <string>Y Fields (multi-selection)</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1" colspan="3">
-           <widget class="QListWidget" name="yFieldsList">
-            <property name="selectionMode">
-             <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" colspan="4">
-           <widget class="QCheckBox" name="selectedOnlyCheck">
-            <property name="text">
-             <string>Use selected features only</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
+          <item row="5" column="0">
            <widget class="QCheckBox" name="enableY2Check">
             <property name="text">
              <string>Enable Y2 axis</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
-           <widget class="QLabel" name="labelY2Field">
-            <property name="text">
-             <string>Y2 Field</string>
+          <item row="0" column="1" colspan="4">
+           <widget class="QComboBox" name="layerCombo"/>
+          </item>
+          <item row="2" column="1" colspan="4">
+           <widget class="QComboBox" name="xFieldCombo"/>
+          </item>
+          <item row="3" column="1" colspan="4">
+           <widget class="QListWidget" name="yFieldsList">
+            <property name="selectionMode">
+             <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
             </property>
            </widget>
           </item>
-          <item row="4" column="2" colspan="2">
-           <widget class="QComboBox" name="y2FieldCombo"/>
+          <item row="1" column="1" colspan="4">
+           <widget class="QPushButton" name="reloadButton">
+            <property name="text">
+             <string>Reload</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -120,10 +127,16 @@
           <string>Chart Type</string>
          </property>
          <layout class="QGridLayout" name="gridLayoutChartType">
-          <item row="0" column="0">
-           <widget class="QLabel" name="labelChartType">
-            <property name="text">
-             <string>Type</string>
+          <item row="2" column="3">
+           <widget class="QSpinBox" name="binSpin">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>1000</number>
+            </property>
+            <property name="value">
+             <number>10</number>
             </property>
            </widget>
           </item>
@@ -186,13 +199,6 @@
             </item>
            </widget>
           </item>
-          <item row="1" column="0" colspan="4">
-           <widget class="QCheckBox" name="autoChartCheck">
-            <property name="text">
-             <string>Suggest chart type automatically</string>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="0" colspan="2">
            <widget class="QCheckBox" name="separateSubplotsCheck">
             <property name="text">
@@ -200,23 +206,24 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="0" colspan="4">
+           <widget class="QCheckBox" name="autoChartCheck">
+            <property name="text">
+             <string>Suggest chart type automatically</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelChartType">
+            <property name="text">
+             <string>Type</string>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="2">
            <widget class="QLabel" name="labelBins">
             <property name="text">
              <string>Bins (histogram)</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="3">
-           <widget class="QSpinBox" name="binSpin">
-            <property name="minimum">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <number>1000</number>
-            </property>
-            <property name="value">
-             <number>10</number>
             </property>
            </widget>
           </item>
@@ -558,14 +565,59 @@
          </item>
         </layout>
        </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayoutProgress">
+         <item>
+          <widget class="QLabel" name="progressLabel">
+           <property name="text">
+            <string>Status</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QProgressBar" name="progressBar">
+           <property name="minimumSize">
+            <size>
+             <width>150</width>
+             <height>18</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>18</height>
+            </size>
+           </property>
+           <property name="value">
+            <number>0</number>
+           </property>
+           <property name="textVisible">
+            <bool>true</bool>
+           </property>
+           <property name="format">
+            <string>%p%</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
     </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="groupBoxPlot">
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
      <property name="title">
       <string>Plot</string>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
      </property>
      <layout class="QVBoxLayout" name="plotLayout"/>
     </widget>
