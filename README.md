@@ -475,3 +475,7 @@ Please use the project's GitHub repository to report issues or propose improveme
 ⭐ Advanced Charts
 
 Advanced Charts brings statistical visualization and chart generation directly into QGIS 4, combining the QGIS data model with the flexibility and power of Matplotlib.
+
+## Interface
+
+<img width="1374" height="993" alt="img6" src="https://github.com/user-attachments/assets/8314f7f4-af7f-4a2c-9a68-086bfbc4b558" />
